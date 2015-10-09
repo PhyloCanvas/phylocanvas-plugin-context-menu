@@ -39,16 +39,17 @@ function createBranchLeafIdsLink(contextMenu, node) {
 }
 
 const DEFAULT_MENU_ITEMS = [
+
   [ { text: 'Collapse/Expand Branch',
     handler: function (branch) {
       branch.toggleCollapsed();
       branch.tree.draw(); // some browsers do not fire mousemove after clicking
     },
-    nodeType: 'internal',
+    node: true,
   }, {
     text: 'Rotate Branch',
     handler: 'rotate',
-    nodeType: 'internal',
+    node: true,
   }, {
     text: 'Show/Hide Labels',
     handler: 'toggleLabels',
@@ -57,35 +58,36 @@ const DEFAULT_MENU_ITEMS = [
   [ {
     text: 'Redraw Subtree',
     handler: 'redrawTreeFromBranch',
-    nodeType: 'internal',
+    node: true,
   }, {
     text: 'Redraw Original Tree',
     handler: 'redrawOriginalTree',
   } ],
 
   [ {
+    text: 'Export Leaf IDs on Branch',
+    element: createBranchLeafIdsLink,
+    node: true,
+  }, {
     text: 'Export As Image',
     element: createImageLink,
   }, {
     text: 'Export Leaf IDs',
     element: createLeafIdsLink,
-  }, {
-    text: 'Export Leaf IDs on Branch',
-    element: createBranchLeafIdsLink,
-    nodeType: 'internal',
   } ],
+
 ];
 
 function menuItemApplicable(menuItem, node) {
   if (!node) {
-    return !menuItem.nodeType;
+    return !menuItem.node;
   }
 
-  if (node.leaf && menuItem.nodeType !== 'internal') {
+  if (node.leaf && !menuItem.node) {
     return true;
   }
 
-  if (!node.leaf && menuItem.nodeType === 'internal') {
+  if (!node.leaf && menuItem.node) {
     return true;
   }
 
@@ -129,7 +131,7 @@ class ContextMenu extends Tooltip {
         listElement.appendChild(document.createTextNode(menuItem.text));
         listElement.addEventListener(
           'click',
-          createHandler(menuItem.nodeType ? node : this.tree, menuItem.handler)
+          createHandler(menuItem.node ? node : this.tree, menuItem.handler)
         );
       }
 
