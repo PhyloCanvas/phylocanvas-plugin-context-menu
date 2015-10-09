@@ -127,19 +127,12 @@ class ContextMenu extends Tooltip {
         listElement.appendChild(menuItem.element(this, node));
       } else {
         listElement.appendChild(document.createTextNode(menuItem.text));
+        listElement.addEventListener(
+          'click',
+          createHandler(menuItem.nodeType ? node : this.tree, menuItem.handler)
+        );
       }
 
-      if (!menuItem.element) {
-        if (menuItem.nodeType) {
-          listElement.addEventListener(
-            'click', createHandler(node, menuItem.handler)
-          );
-        } else {
-          listElement.addEventListener(
-            'click', createHandler(this.tree, menuItem.handler)
-          );
-        }
-      }
       listElement.addEventListener('click', createHandler(this, 'close'));
       listElement.addEventListener('contextmenu', preventDefault);
 
