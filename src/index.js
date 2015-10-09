@@ -40,16 +40,17 @@ function createBranchLeafIdsLink(contextMenu, node) {
 
 const DEFAULT_MENU_ITEMS = [
 
-  [ { text: 'Collapse/Expand Branch',
-    handler: function (branch) {
+  [ {
+    text: 'Collapse/Expand Branch',
+    node: true,
+    handler(branch) {
       branch.toggleCollapsed();
       branch.tree.draw(); // some browsers do not fire mousemove after clicking
     },
-    node: true,
   }, {
     text: 'Rotate Branch',
-    handler: 'rotate',
     node: true,
+    handler: 'rotate',
   }, {
     text: 'Show/Hide Labels',
     handler: 'toggleLabels',
@@ -57,8 +58,8 @@ const DEFAULT_MENU_ITEMS = [
 
   [ {
     text: 'Redraw Subtree',
-    handler: 'redrawTreeFromBranch',
     node: true,
+    handler: 'redrawTreeFromBranch',
   }, {
     text: 'Redraw Original Tree',
     handler: 'redrawOriginalTree',
@@ -66,8 +67,8 @@ const DEFAULT_MENU_ITEMS = [
 
   [ {
     text: 'Export Leaf IDs on Branch',
-    element: createBranchLeafIdsLink,
     node: true,
+    element: createBranchLeafIdsLink,
   }, {
     text: 'Export As Image',
     element: createImageLink,
