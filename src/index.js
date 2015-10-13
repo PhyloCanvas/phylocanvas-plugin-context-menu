@@ -115,6 +115,10 @@ class ContextMenu extends Tooltip {
     if (!unstyled) {
       require('./style.css');
     }
+
+    this.element.addEventListener('click', function (event) {
+      event.stopPropagation();
+    });
   }
 
   createSublist(menuItems, node) {
