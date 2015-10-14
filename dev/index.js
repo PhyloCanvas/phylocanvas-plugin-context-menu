@@ -12,6 +12,7 @@ const tree = PhyloCanvas.createTree('phylocanvas', {
 
 tree.showLabels = true;
 tree.hoverLabel = true;
+tree.setTreeType('rectangular');
 
 tree.on('error', function (event) { throw event.error; });
 

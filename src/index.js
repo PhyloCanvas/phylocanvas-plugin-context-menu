@@ -54,6 +54,11 @@ const DEFAULT_MENU_ITEMS = [
   }, {
     text: 'Show/Hide Labels',
     handler: 'toggleLabels',
+  }, {
+    text: 'Align/Realign Labels',
+    handler( tree ) {
+      tree.alignLabels = !tree.alignLabels;
+    },
   } ],
 
   [ {
