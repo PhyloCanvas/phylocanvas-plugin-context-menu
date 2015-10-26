@@ -38,7 +38,7 @@ function createBranchLeafIdsLink(contextMenu, node) {
   });
 }
 
-const DEFAULT_MENU_ITEMS = [
+export const DEFAULT_MENU_ITEMS = [
 
   [ {
     text: 'Collapse/Expand Branch',
@@ -109,10 +109,16 @@ function menuItemApplicable(menuItem, node) {
  */
 class ContextMenu extends Tooltip {
 
-  constructor(tree, { menuItems = DEFAULT_MENU_ITEMS, unstyled = false, className } = {}) {
+  constructor(tree, {
+    menuItems = DEFAULT_MENU_ITEMS,
+    unstyled = false,
+    className = '',
+    parent,
+  } = {}) {
     super(tree, {
-      className: `phylocanvas-context-menu ${className ? className : ''}`.trim(),
+      className: `phylocanvas-context-menu ${className}`.trim(),
       element: document.createElement('ul'),
+      parent,
     });
 
     this.menuItems = menuItems;

@@ -7,6 +7,7 @@ const tree = PhyloCanvas.createTree('phylocanvas', {
   contextMenu: {
     className: 'extra-class',
     // unstyled: true,
+    // parent: document.body,
   },
 });
 
