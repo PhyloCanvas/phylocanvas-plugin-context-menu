@@ -1,23 +1,23 @@
-/* eslint es6: false */
-var webpack = require('webpack');
+const webpack = require('webpack');
 
-var loaders = [
+const loaders = [
   { test: /\.js$/, exclude: /webpack/, loader: 'babel?stage=0' },
   { test: /\.css$/, loader: 'style!css' },
-]
+];
 
-var devConfig = {
+const devConfig = {
   entry: './dev/index.js',
+  devtool: '#eval-source-map',
   output: {
     filename: 'dev.js',
     libraryTarget: 'umd',
   },
   module: {
     loaders,
-  }
+  },
 };
 
-var buildConfig = {
+const buildConfig = {
   entry: './src/index.js',
   output: {
     filename: 'index.js',
@@ -30,12 +30,12 @@ var buildConfig = {
   plugins: [
     new webpack.optimize.UglifyJsPlugin({
       compressor: {
-        warnings: false
-      }
-    })
-  ]
+        warnings: false,
+      },
+    }),
+  ],
 };
 
-var isBuild = process.env.NODE_ENV && process.env.NODE_ENV === 'production';
+const isBuild = process.env.NODE_ENV && process.env.NODE_ENV === 'production';
 
 module.exports = isBuild ? buildConfig : devConfig;

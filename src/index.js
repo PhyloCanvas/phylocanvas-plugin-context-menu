@@ -1,4 +1,4 @@
-import { Tooltip } from 'PhyloCanvas';
+import { Tooltip } from 'phylocanvas';
 import { events, canvas } from 'phylocanvas-utils';
 
 const { createHandler, preventDefault } = events;
