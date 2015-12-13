@@ -1,10 +1,11 @@
 import { Tooltip } from 'phylocanvas';
-import { events, canvas } from 'phylocanvas-utils';
+import { events, canvas, dom } from 'phylocanvas-utils';
 
 const { createHandler, preventDefault } = events;
 const { translateClick } = canvas;
+const { createBlobUrl } = dom;
 
-function createAnchorElement(contextMenu, { text = 'link', filename = 'file', href }) {
+function createAnchorElement({ text = 'link', filename = 'file', href }) {
   const anchorElement = document.createElement('a');
   anchorElement.appendChild(document.createTextNode(text));
   anchorElement.href = href;
@@ -12,93 +13,103 @@ function createAnchorElement(contextMenu, { text = 'link', filename = 'file', hr
   return anchorElement;
 }
 
-function createImageLink(contextMenu) {
-  return createAnchorElement(contextMenu, {
+function createImageLink({ tree }) {
+  return createAnchorElement({
     text: this.text,
-    filename: 'phylocanvas_tree.png',
-    href: contextMenu.tree.getPngUrl(),
+    filename: 'phylocanvas-tree.png',
+    href: tree.getPngUrl(),
   });
 }
 
-function createLeafIdsLink(contextMenu) {
-  const leafdata = contextMenu.tree.root.downloadLeafIdsFromBranch();
-  return createAnchorElement(contextMenu, {
+function createLeafLabelsLink({ tree }) {
+  return createAnchorElement({
     text: this.text,
-    filename: 'pc-leaf-ids-root.txt',
-    href: leafdata,
+    filename: 'phylocanvas-leaf-labels.txt',
+    href: createBlobUrl(tree.root.getChildProperties('label').join('\n')),
   });
 }
 
-function createBranchLeafIdsLink(contextMenu, node) {
-  const leafdata = node.downloadLeafIdsFromBranch();
-  return createAnchorElement(contextMenu, {
+function createBranchLeafLabelsLink(_, node) {
+  return createAnchorElement({
     text: this.text,
-    filename: `pc-leaf-ids-${node.id}.txt`,
-    href: leafdata,
+    filename: `phylocanvas-leaf-labels-branch-${node.id}.txt`,
+    href: createBlobUrl(node.getChildProperties('label').join('\n')),
+  });
+}
+
+function createNewickLink({ tree }) {
+  return createAnchorElement({
+    text: this.text,
+    filename: 'phylocanvas.nwk',
+    href: createBlobUrl(tree.root.getNwk()),
+  });
+}
+
+function createBranchNewickLink(_, node) {
+  return createAnchorElement({
+    text: this.text,
+    filename: `phylocanvas-branch-${node.id}.nwk`,
+    href: createBlobUrl(node.getNwk()),
   });
 }
 
 export const DEFAULT_MENU_ITEMS = [
 
   [ {
-    text: 'Collapse/Expand Branch',
-    node: true,
-    handler(branch) {
-      branch.toggleCollapsed();
-      branch.tree.draw(); // some browsers do not fire mousemove after clicking
-    },
-  }, {
-    text: 'Rotate Branch',
-    node: true,
-    handler: 'rotate',
-  }, {
     text: 'Show/Hide Labels',
     handler: 'toggleLabels',
   }, {
     text: 'Align/Realign Labels',
-    handler( tree ) {
+    handler(tree) {
       tree.alignLabels = !tree.alignLabels;
     },
   } ],
 
   [ {
-    text: 'Redraw Subtree',
-    node: true,
-    handler: 'redrawTreeFromBranch',
-  }, {
     text: 'Redraw Original Tree',
     handler: 'redrawOriginalTree',
   } ],
 
   [ {
-    text: 'Export Leaf IDs on Branch',
-    node: true,
-    element: createBranchLeafIdsLink,
+    text: 'Export Leaf Labels',
+    element: createLeafLabelsLink,
   }, {
-    text: 'Export As Image',
+    text: 'Export as Newick File',
+    element: createNewickLink,
+  }, {
+    text: 'Export as Image',
     element: createImageLink,
-  }, {
-    text: 'Export Leaf IDs',
-    element: createLeafIdsLink,
   } ],
 
 ];
 
-function menuItemApplicable(menuItem, node) {
-  if (!node) {
-    return !menuItem.node;
-  }
+export const DEFAULT_BRANCH_MENU_ITEMS = [
 
-  if (node.leaf && !menuItem.node) {
-    return true;
-  }
+  [ {
+    text: 'Collapse/Expand Subtree',
+    handler(branch) {
+      branch.toggleCollapsed();
+      branch.tree.draw(); // some browsers do not fire mousemove after clicking
+    },
+  }, {
+    text: 'Rotate Subtree',
+    handler: 'rotate',
+  } ],
 
-  if (!node.leaf && menuItem.node) {
-    return true;
-  }
+  [ {
+    text: 'Redraw Subtree',
+    handler: 'redrawTreeFromBranch',
+  } ],
 
-  return false;
-}
+  [ {
+    text: 'Export Subtree Leaf Labels',
+    element: createBranchLeafLabelsLink,
+  }, {
+    text: 'Export Subtree as Newick File',
+    element: createBranchNewickLink,
+  } ],
+
+];
 
 /**
  * The menu that is shown when the PhyloCanvas widget is right-clicked
@@ -111,6 +122,7 @@ class ContextMenu extends Tooltip {
 
   constructor(tree, {
     menuItems = DEFAULT_MENU_ITEMS,
+    branchMenuItems = DEFAULT_BRANCH_MENU_ITEMS,
     unstyled = false,
     className = '',
     parent,
@@ -122,6 +134,7 @@ class ContextMenu extends Tooltip {
     });
 
     this.menuItems = menuItems;
+    this.branchMenuItems = branchMenuItems;
 
     if (!unstyled) {
       require('./style.css');
@@ -135,10 +148,6 @@ class ContextMenu extends Tooltip {
   createSublist(menuItems, node) {
     const sublist = document.createElement('ul');
     for (const menuItem of menuItems) {
-      if (!menuItemApplicable(menuItem, node)) {
-        continue;
-      }
-
       const listElement = document.createElement('li');
 
       if (menuItem.element) {
@@ -147,7 +156,7 @@ class ContextMenu extends Tooltip {
         listElement.appendChild(document.createTextNode(menuItem.text));
         listElement.addEventListener(
           'click',
-          createHandler(menuItem.node ? node : this.tree, menuItem.handler)
+          createHandler(node || this.tree, menuItem.handler)
         );
       }
 
@@ -163,7 +172,8 @@ class ContextMenu extends Tooltip {
   }
 
   createContent(node) {
-    for (const subgroup of this.menuItems) {
+    const menuItems = node ? this.branchMenuItems : this.menuItems;
+    for (const subgroup of menuItems) {
       this.createSublist(subgroup, node);
     }
     document.body.addEventListener('click', createHandler(this, 'close'));
@@ -173,8 +183,14 @@ class ContextMenu extends Tooltip {
 function handleContextmenu(event) {
   if (event.button === 2) {
     event.preventDefault();
-    const node = this.root.clicked(...translateClick(event.clientX, event.clientY, this));
-    this.contextMenu.open(event.clientX, event.clientY, node && node.interactive ? node : null);
+    const node = this.root.clicked(
+      ...translateClick(event.clientX, event.clientY, this)
+    );
+    this.contextMenu.open(
+      event.clientX,
+      event.clientY,
+      node && node.interactive ? node : null
+    );
     this.contextMenu.closed = false;
     this.tooltip.close();
   }

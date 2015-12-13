@@ -28,7 +28,7 @@
     "babel-loader": "^5.3.2",
     "cgps-style": "imperialcollegelondon/javascript#v1.0.2",
     "css-loader": "^0.19.0",
-    "phylocanvas": "phylocanvas/phylocanvas#v2.0.0-rc3",
+    "phylocanvas": "phylocanvas/phylocanvas#v2.0.0-rc4",
     "phylocanvas-utils": "phylocanvas/phylocanvas-utils",
     "style-loader": "^0.12.4",
     "webpack": "^1.12.2",
