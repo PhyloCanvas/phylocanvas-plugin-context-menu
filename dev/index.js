@@ -8,6 +8,11 @@ const tree = Phylocanvas.createTree('phylocanvas', {
     className: 'extra-class',
     // unstyled: true,
     // parent: document.body,
+    filenames: {
+      image: 'tree.png',
+      leafLabels: 'labels.txt',
+      newick: 'tree.nwk',
+    },
   },
 });
 

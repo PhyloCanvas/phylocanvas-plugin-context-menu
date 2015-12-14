@@ -13,43 +13,27 @@ function createAnchorElement({ text = 'link', filename = 'file', href }) {
   return anchorElement;
 }
 
-function createImageLink({ tree }) {
+function createImageLink({ tree, filenames }) {
   return createAnchorElement({
     text: this.text,
-    filename: 'phylocanvas-tree.png',
+    filename: filenames.image,
     href: tree.getPngUrl(),
   });
 }
 
-function createLeafLabelsLink({ tree }) {
+function createLeafLabelsLink({ tree, filenames }, node) {
   return createAnchorElement({
     text: this.text,
-    filename: 'phylocanvas-leaf-labels.txt',
-    href: createBlobUrl(tree.root.getChildProperties('label').join('\n')),
+    filename: filenames.leafLabels,
+    href: createBlobUrl((node || tree.root).getChildProperties('label').join('\n')),
   });
 }
 
-function createBranchLeafLabelsLink(_, node) {
+function createNewickLink({ tree, filenames }, node) {
   return createAnchorElement({
     text: this.text,
-    filename: `phylocanvas-leaf-labels-branch-${node.id}.txt`,
-    href: createBlobUrl(node.getChildProperties('label').join('\n')),
-  });
-}
-
-function createNewickLink({ tree }) {
-  return createAnchorElement({
-    text: this.text,
-    filename: 'phylocanvas.nwk',
-    href: createBlobUrl(tree.root.getNwk()),
-  });
-}
-
-function createBranchNewickLink(_, node) {
-  return createAnchorElement({
-    text: this.text,
-    filename: `phylocanvas-branch-${node.id}.nwk`,
-    href: createBlobUrl(node.getNwk()),
+    filename: filenames.newick,
+    href: createBlobUrl((node || tree.root).getNwk()),
   });
 }
 
@@ -103,13 +87,19 @@ export const DEFAULT_BRANCH_MENU_ITEMS = [
 
   [ {
     text: 'Export Subtree Leaf Labels',
-    element: createBranchLeafLabelsLink,
+    element: createLeafLabelsLink,
   }, {
     text: 'Export Subtree as Newick File',
-    element: createBranchNewickLink,
+    element: createNewickLink,
   } ],
 
 ];
+
+const DEFAULT_FILENAMES = {
+  image: 'phylocanvas.png',
+  leafLabels: 'phylocanvas-leaf-labels.txt',
+  newick: 'phylocanvas.nwk',
+};
 
 /**
  * The menu that is shown when the PhyloCanvas widget is right-clicked
@@ -126,6 +116,7 @@ class ContextMenu extends Tooltip {
     unstyled = false,
     className = '',
     parent,
+    filenames = DEFAULT_FILENAMES,
   } = {}) {
     super(tree, {
       className: `phylocanvas-context-menu ${className}`.trim(),
@@ -135,6 +126,7 @@ class ContextMenu extends Tooltip {
 
     this.menuItems = menuItems;
     this.branchMenuItems = branchMenuItems;
+    this.filenames = filenames;
 
     if (!unstyled) {
       require('./style.css');
