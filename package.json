@@ -1,6 +1,6 @@
 {
   "name": "phylocanvas-plugin-context-menu",
-  "version": "3.0.0",
+  "version": "3.0.1",
   "description": "Contextual functions for Phylocanvas",
   "main": "index.js",
   "scripts": {
