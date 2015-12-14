@@ -26,7 +26,7 @@ const buildConfig = {
   module: {
     loaders,
   },
-  externals: 'PhyloCanvas',
+  externals: 'phylocanvas',
   plugins: [
     new webpack.optimize.UglifyJsPlugin({
       compressor: {
