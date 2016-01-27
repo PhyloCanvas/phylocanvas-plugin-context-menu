@@ -175,9 +175,7 @@ class ContextMenu extends Tooltip {
 function handleContextmenu(event) {
   if (event.button === 2) {
     event.preventDefault();
-    const node = this.root.clicked(
-      ...translateClick(event.clientX, event.clientY, this)
-    );
+    const node = this.getNodeAtMousePosition(event);
     this.contextMenu.open(
       event.clientX,
       event.clientY,
