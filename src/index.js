@@ -1,9 +1,7 @@
-import { Tooltip } from 'phylocanvas';
-import { events, canvas, dom } from 'phylocanvas-utils';
+import { Tooltip, utils } from 'phylocanvas';
 
-const { createHandler, preventDefault } = events;
-const { translateClick } = canvas;
-const { createBlobUrl } = dom;
+const { createHandler, preventDefault } = utils.events;
+const { createBlobUrl } = utils.dom;
 
 function createAnchorElement({ text = 'link', filename = 'file', href }) {
   const anchorElement = document.createElement('a');
