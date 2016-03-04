@@ -1,3 +1,4 @@
+import 'phylocanvas/polyfill';
 import Phylocanvas from 'phylocanvas';
 import contextMenuPlugin from '../src/index';
 
