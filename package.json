@@ -1,6 +1,6 @@
 {
   "name": "phylocanvas-plugin-context-menu",
-  "version": "3.3.0",
+  "version": "3.4.0",
   "description": "Contextual functions for Phylocanvas",
   "main": "index.js",
   "scripts": {
@@ -30,8 +30,7 @@
     "babel-preset-stage-0": "^6.3.13",
     "cgps-style": "imperialcollegelondon/javascript#v1.0.2",
     "css-loader": "^0.23.0",
-    "phylocanvas": "phylocanvas/phylocanvas#v2.0.0-rc9",
-    "phylocanvas-utils": "phylocanvas/phylocanvas-utils#v3.0.0",
+    "phylocanvas": "phylocanvas/phylocanvas#v2.0.0-rc11",
     "style-loader": "^0.13.0",
     "webpack": "^1.12.2",
     "webpack-dev-server": "^1.12.0"
