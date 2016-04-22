@@ -15,7 +15,7 @@ const devConfig = {
   entry: './dev/index.js',
   devtool: '#eval-source-map',
   output: {
-    filename: 'dev.js',
+    filename: 'index.js',
     libraryTarget: 'umd',
   },
   module: {
