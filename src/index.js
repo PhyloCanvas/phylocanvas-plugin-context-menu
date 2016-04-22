@@ -48,6 +48,11 @@ export const DEFAULT_MENU_ITEMS = [
   } ],
 
   [ {
+    text: 'Fit in Panel',
+    handler(tree) {
+      tree.fitInPanel();
+    },
+  }, {
     text: 'Redraw Original Tree',
     handler: 'redrawOriginalTree',
   } ],
@@ -136,7 +141,7 @@ function ContextMenu(tree, {
 ContextMenu.prototype = Object.create(Tooltip.prototype);
 ContextMenu.prototype.constructor = ContextMenu;
 
-ContextMenu.prototype.createSublist = function(menuItems, node) {
+ContextMenu.prototype.createSublist = function (menuItems, node) {
   const sublist = document.createElement('ul');
   for (const menuItem of menuItems) {
     const listElement = document.createElement('li');
