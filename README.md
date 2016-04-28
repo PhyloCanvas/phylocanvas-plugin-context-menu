@@ -1,12 +1,12 @@
-# PhyloCanvas Context Menu Plugin
-Contextual functions for PhyloCanvas
+# Phylocanvas Context Menu Plugin
+Contextual functions for Phylocanvas
 
 ## Usage
 ```
-npm install PhyloCanvas phylocanvas-plugin-context-menu
+npm install phylocanvas phylocanvas-plugin-context-menu
 ```
 ```javascript
-import PhyloCanvas from 'PhyloCanvas';
+import Phylocanvas from 'phylocanvas';
 import contextMenuPlugin from 'phylocanvas-plugin-context-menu';
 
 PhyloCanvas.plugin(contextMenuPlugin);
