@@ -7,22 +7,22 @@ npm install phylocanvas phylocanvas-plugin-context-menu
 ```
 ```javascript
 import Phylocanvas from 'phylocanvas';
-import contextMenuPlugin from 'phylocanvas-plugin-context-menu';
+import contextMenuPlugin, {
+  DEFAULT_MENU_ITEMS,
+  DEFAULT_BRANCH_MENU_ITEMS,
+  DEFAULT_FILENAMES,
+} from 'phylocanvas-plugin-context-menu';
 
 Phylocanvas.plugin(contextMenuPlugin);
 
 Phylocanvas.createTree('id', {
-  contextMenu: {
-    menuItems: [],
-    branchMenuItems: [],
+  contextMenu: { // config defaults
+    menuItems: DEFAULT_MENU_ITEMS,
+    branchMenuItems: DEFAULT_BRANCH_MENU_ITEMS, 
     unstyled: false,
     className: '',
-    parent,
-    filenames: {
-      image: '',
-      leafLabels: '',
-      newick: '',
-    }
+    parent: undefined, // supply parent element to fix z-index issues
+    filenames: DEFAULT_FILENAMES, 
   }
 })
 ```
