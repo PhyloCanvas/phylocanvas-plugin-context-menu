@@ -9,7 +9,20 @@ npm install phylocanvas phylocanvas-plugin-context-menu
 import Phylocanvas from 'phylocanvas';
 import contextMenuPlugin from 'phylocanvas-plugin-context-menu';
 
-PhyloCanvas.plugin(contextMenuPlugin);
+Phylocanvas.plugin(contextMenuPlugin);
 
-// ...then load your tree(s)
+Phylocanvas.createTree('id', {
+  contextMenu: {
+    menuItems: [],
+    branchMenuItems: [],
+    unstyled: false,
+    className: '',
+    parent,
+    filenames: {
+      image: '',
+      leafLabels: '',
+      newick: '',
+    }
+  }
+})
 ```
