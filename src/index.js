@@ -35,6 +35,14 @@ function createNewickLink({ tree, filenames }, node) {
   });
 }
 
+function createAboutLink() {
+  const anchorElement = document.createElement('a');
+  anchorElement.appendChild(document.createTextNode('About Phylocanvas...'));
+  anchorElement.href = 'http://phylocanvas.org/';
+  anchorElement.target = '_blank';
+  return anchorElement;
+}
+
 export const DEFAULT_MENU_ITEMS = [
 
   [ {
@@ -68,6 +76,9 @@ export const DEFAULT_MENU_ITEMS = [
     element: createImageLink,
   } ],
 
+  [ {
+    element: createAboutLink,
+  } ],
 ];
 
 export const DEFAULT_BRANCH_MENU_ITEMS = [
@@ -96,6 +107,9 @@ export const DEFAULT_BRANCH_MENU_ITEMS = [
     element: createNewickLink,
   } ],
 
+  [ {
+    element: createAboutLink,
+  } ],
 ];
 
 const DEFAULT_FILENAMES = {
