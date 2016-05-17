@@ -179,16 +179,14 @@ ContextMenu.prototype.createSublist = function (menuItems, node) {
   if (sublist.hasChildNodes()) {
     this.element.appendChild(sublist);
   }
-}
+};
 
-ContextMenu.prototype.createContent = function(node) {
+ContextMenu.prototype.createContent = function (node) {
   const menuItems = node ? this.branchMenuItems : this.menuItems;
   for (const subgroup of menuItems) {
     this.createSublist(subgroup, node);
   }
-  document.body.addEventListener('click', createHandler(this, 'close'));
-}
-
+};
 
 function handleContextmenu(event) {
   if (event.button === 2) {
@@ -200,6 +198,7 @@ function handleContextmenu(event) {
       node && node.interactive ? node : null
     );
     this.contextMenu.closed = false;
+    document.body.addEventListener('click', createHandler(this.contextMenu, 'close'));
     this.tooltip.close();
   }
 }
