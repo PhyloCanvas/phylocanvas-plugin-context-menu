@@ -27,6 +27,20 @@ function createLeafLabelsLink({ tree, filenames }, node) {
   });
 }
 
+function createSelectedLabelsLink({ tree, filenames }, node) {
+  const labels = tree.leaves.reduce((memo, leaf) => {
+    if (leaf[tree.clickFlag] === true) {
+      memo.push(leaf.label);
+    }
+    return memo;
+  }, []);
+  return createAnchorElement({
+    text: this.text,
+    filename: filenames.leafLabels,
+    href: createBlobUrl(labels.join('\n')),
+  });
+}
+
 function createNewickLink({ tree, filenames }, node) {
   return createAnchorElement({
     text: this.text,
@@ -68,6 +82,9 @@ export const DEFAULT_MENU_ITEMS = [
   [ {
     text: 'Export Leaf Labels',
     element: createLeafLabelsLink,
+  }, {
+    text: 'Export Selected Labels',
+    element: createSelectedLabelsLink,
   }, {
     text: 'Export as Newick File',
     element: createNewickLink,
