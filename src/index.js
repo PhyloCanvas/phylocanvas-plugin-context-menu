@@ -34,6 +34,9 @@ function createSelectedLabelsLink({ tree, filenames }, node) {
     }
     return memo;
   }, []);
+  if (labels.length === 0) {
+    return null;
+  }
   return createAnchorElement({
     text: this.text,
     filename: filenames.leafLabels,
@@ -175,22 +178,28 @@ ContextMenu.prototype.constructor = ContextMenu;
 ContextMenu.prototype.createSublist = function (menuItems, node) {
   const sublist = document.createElement('ul');
   for (const menuItem of menuItems) {
-    const listElement = document.createElement('li');
+    let listElement = null;
 
     if (menuItem.element) {
-      listElement.appendChild(menuItem.element(this, node));
+      const menuItemContent = menuItem.element(this, node);
+      if (menuItemContent) {
+        listElement = document.createElement('li');
+        listElement.appendChild(menuItemContent);
+      }
     } else {
+      listElement = document.createElement('li');
       listElement.appendChild(document.createTextNode(menuItem.text));
       listElement.addEventListener(
         'click',
         createHandler(node || this.tree, menuItem.handler)
       );
     }
+    if (listElement) {
+      listElement.addEventListener('click', createHandler(this, 'close'));
+      listElement.addEventListener('contextmenu', preventDefault);
 
-    listElement.addEventListener('click', createHandler(this, 'close'));
-    listElement.addEventListener('contextmenu', preventDefault);
-
-    sublist.appendChild(listElement);
+      sublist.appendChild(listElement);
+    }
   }
 
   if (sublist.hasChildNodes()) {
@@ -199,7 +208,8 @@ ContextMenu.prototype.createSublist = function (menuItems, node) {
 }
 
 ContextMenu.prototype.createContent = function(node) {
-  const menuItems = node ? this.branchMenuItems : this.menuItems;
+  const menuItems =
+    node && node.children.length ? this.branchMenuItems : this.menuItems;
   for (const subgroup of menuItems) {
     this.createSublist(subgroup, node);
   }
