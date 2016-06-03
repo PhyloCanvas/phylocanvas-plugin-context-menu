@@ -23,7 +23,25 @@ function createLeafLabelsLink({ tree, filenames }, node) {
   return createAnchorElement({
     text: this.text,
     filename: filenames.leafLabels,
-    href: createBlobUrl((node || tree.root).getChildProperties('label').join('\n')),
+    href:
+      createBlobUrl((node || tree.root).getChildProperties('label').join('\n')),
+  });
+}
+
+function createSelectedLabelsLink({ tree, filenames }) {
+  const labels = tree.leaves.reduce((memo, leaf) => {
+    if (leaf[tree.clickFlag] === true) {
+      memo.push(leaf.label);
+    }
+    return memo;
+  }, []);
+  if (labels.length === 0) {
+    return null;
+  }
+  return createAnchorElement({
+    text: this.text,
+    filename: filenames.leafLabels,
+    href: createBlobUrl(labels.join('\n')),
   });
 }
 
@@ -68,6 +86,9 @@ export const DEFAULT_MENU_ITEMS = [
   [ {
     text: 'Export Leaf Labels',
     element: createLeafLabelsLink,
+  }, {
+    text: 'Export Selected Labels',
+    element: createSelectedLabelsLink,
   }, {
     text: 'Export as Newick File',
     element: createNewickLink,
@@ -147,9 +168,7 @@ function ContextMenu(tree, {
     require('./style.css');
   }
 
-  this.element.addEventListener('click', function (event) {
-    event.stopPropagation();
-  });
+  this.element.addEventListener('click', (event) => event.stopPropagation());
 }
 
 ContextMenu.prototype = Object.create(Tooltip.prototype);
@@ -158,36 +177,43 @@ ContextMenu.prototype.constructor = ContextMenu;
 ContextMenu.prototype.createSublist = function (menuItems, node) {
   const sublist = document.createElement('ul');
   for (const menuItem of menuItems) {
-    const listElement = document.createElement('li');
+    let listElement = null;
 
     if (menuItem.element) {
-      listElement.appendChild(menuItem.element(this, node));
+      const menuItemContent = menuItem.element(this, node);
+      if (menuItemContent) {
+        listElement = document.createElement('li');
+        listElement.appendChild(menuItemContent);
+      }
     } else {
+      listElement = document.createElement('li');
       listElement.appendChild(document.createTextNode(menuItem.text));
       listElement.addEventListener(
         'click',
         createHandler(node || this.tree, menuItem.handler)
       );
     }
+    if (listElement) {
+      listElement.addEventListener('click', createHandler(this, 'close'));
+      listElement.addEventListener('contextmenu', preventDefault);
 
-    listElement.addEventListener('click', createHandler(this, 'close'));
-    listElement.addEventListener('contextmenu', preventDefault);
-
-    sublist.appendChild(listElement);
+      sublist.appendChild(listElement);
+    }
   }
 
   if (sublist.hasChildNodes()) {
     this.element.appendChild(sublist);
   }
-}
+};
 
-ContextMenu.prototype.createContent = function(node) {
-  const menuItems = node ? this.branchMenuItems : this.menuItems;
+ContextMenu.prototype.createContent = function (node) {
+  const menuItems =
+    node && node.children.length ? this.branchMenuItems : this.menuItems;
   for (const subgroup of menuItems) {
     this.createSublist(subgroup, node);
   }
   document.body.addEventListener('click', createHandler(this, 'close'));
-}
+};
 
 
 function handleContextmenu(event) {
@@ -205,7 +231,7 @@ function handleContextmenu(event) {
 }
 
 export default function contextMenuPlugin(decorate) {
-  decorate(this, 'createTree', function (delegate, args) {
+  decorate(this, 'createTree', (delegate, args) => {
     const tree = delegate(...args);
     const [ , config = {} ] = args;
 
