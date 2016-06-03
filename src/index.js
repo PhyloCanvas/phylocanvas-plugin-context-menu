@@ -23,11 +23,12 @@ function createLeafLabelsLink({ tree, filenames }, node) {
   return createAnchorElement({
     text: this.text,
     filename: filenames.leafLabels,
-    href: createBlobUrl((node || tree.root).getChildProperties('label').join('\n')),
+    href:
+      createBlobUrl((node || tree.root).getChildProperties('label').join('\n')),
   });
 }
 
-function createSelectedLabelsLink({ tree, filenames }, node) {
+function createSelectedLabelsLink({ tree, filenames }) {
   const labels = tree.leaves.reduce((memo, leaf) => {
     if (leaf[tree.clickFlag] === true) {
       memo.push(leaf.label);
@@ -167,9 +168,7 @@ function ContextMenu(tree, {
     require('./style.css');
   }
 
-  this.element.addEventListener('click', function (event) {
-    event.stopPropagation();
-  });
+  this.element.addEventListener('click', (event) => event.stopPropagation());
 }
 
 ContextMenu.prototype = Object.create(Tooltip.prototype);
@@ -205,16 +204,16 @@ ContextMenu.prototype.createSublist = function (menuItems, node) {
   if (sublist.hasChildNodes()) {
     this.element.appendChild(sublist);
   }
-}
+};
 
-ContextMenu.prototype.createContent = function(node) {
+ContextMenu.prototype.createContent = function (node) {
   const menuItems =
     node && node.children.length ? this.branchMenuItems : this.menuItems;
   for (const subgroup of menuItems) {
     this.createSublist(subgroup, node);
   }
   document.body.addEventListener('click', createHandler(this, 'close'));
-}
+};
 
 
 function handleContextmenu(event) {
@@ -232,7 +231,7 @@ function handleContextmenu(event) {
 }
 
 export default function contextMenuPlugin(decorate) {
-  decorate(this, 'createTree', function (delegate, args) {
+  decorate(this, 'createTree', (delegate, args) => {
     const tree = delegate(...args);
     const [ , config = {} ] = args;
 
