@@ -5,6 +5,7 @@ import contextMenuPlugin from '../src/index';
 Phylocanvas.plugin(contextMenuPlugin);
 
 const tree = Phylocanvas.createTree('phylocanvas', {
+  // contextMenu: false,
   contextMenu: {
     className: 'extra-class',
     // unstyled: true,

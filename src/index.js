@@ -235,8 +235,10 @@ export default function contextMenuPlugin(decorate) {
     const tree = delegate(...args);
     const [ , config = {} ] = args;
 
-    tree.contextMenu = new ContextMenu(tree, config.contextMenu);
-    tree.addListener('contextmenu', handleContextmenu.bind(tree));
+    if (config.contextMenu !== false) {
+      tree.contextMenu = new ContextMenu(tree, config.contextMenu);
+      tree.addListener('contextmenu', handleContextmenu.bind(tree));
+    }
 
     return tree;
   });
