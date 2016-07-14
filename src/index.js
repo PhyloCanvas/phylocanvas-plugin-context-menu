@@ -149,75 +149,76 @@ const DEFAULT_FILENAMES = {
  * @memberOf PhyloCanvas
  * @extends Tooltip
  */
-function ContextMenu(tree, {
-  menuItems = DEFAULT_MENU_ITEMS,
-  branchMenuItems = DEFAULT_BRANCH_MENU_ITEMS,
-  unstyled = false,
-  className = '',
-  parent,
-  filenames = DEFAULT_FILENAMES,
-} = {}) {
-  Tooltip.call(this, tree, {
-    className: `phylocanvas-context-menu ${className}`.trim(),
-    element: document.createElement('ul'),
+class ContextMenu extends Tooltip {
+
+  constructor(tree, {
+    menuItems = DEFAULT_MENU_ITEMS,
+    branchMenuItems = DEFAULT_BRANCH_MENU_ITEMS,
+    unstyled = false,
+    className = '',
     parent,
-  });
+    filenames = DEFAULT_FILENAMES,
+  } = {}) {
+    super(tree, {
+      className: `phylocanvas-context-menu ${className}`.trim(),
+      element: document.createElement('ul'),
+      parent,
+    });
 
-  this.menuItems = menuItems;
-  this.branchMenuItems = branchMenuItems;
-  this.filenames = filenames;
+    this.menuItems = menuItems;
+    this.branchMenuItems = branchMenuItems;
+    this.filenames = filenames;
 
-  if (!unstyled) {
-    require('./style.css');
+    if (!unstyled) {
+      require('./style.css');
+    }
+
+    this.element.addEventListener('click', (event) => event.stopPropagation());
   }
 
-  this.element.addEventListener('click', (event) => event.stopPropagation());
-}
+  createSublist(menuItems, node) {
+    const sublist = document.createElement('ul');
+    for (const menuItem of menuItems) {
+      let listElement = null;
 
-ContextMenu.prototype = Object.create(Tooltip.prototype);
-ContextMenu.prototype.constructor = ContextMenu;
-
-ContextMenu.prototype.createSublist = function (menuItems, node) {
-  const sublist = document.createElement('ul');
-  for (const menuItem of menuItems) {
-    let listElement = null;
-
-    if (menuItem.element) {
-      const menuItemContent = menuItem.element(this, node);
-      if (menuItemContent) {
+      if (menuItem.element) {
+        const menuItemContent = menuItem.element(this, node);
+        if (menuItemContent) {
+          listElement = document.createElement('li');
+          listElement.appendChild(menuItemContent);
+        }
+      } else {
         listElement = document.createElement('li');
-        listElement.appendChild(menuItemContent);
+        listElement.appendChild(document.createTextNode(menuItem.text));
+        listElement.addEventListener(
+          'click',
+          createHandler(node || this.tree, menuItem.handler)
+        );
       }
-    } else {
-      listElement = document.createElement('li');
-      listElement.appendChild(document.createTextNode(menuItem.text));
-      listElement.addEventListener(
-        'click',
-        createHandler(node || this.tree, menuItem.handler)
-      );
-    }
-    if (listElement) {
-      listElement.addEventListener('click', createHandler(this, 'close'));
-      listElement.addEventListener('contextmenu', preventDefault);
 
-      sublist.appendChild(listElement);
+      if (listElement) {
+        listElement.addEventListener('click', createHandler(this, 'close'));
+        listElement.addEventListener('contextmenu', preventDefault);
+
+        sublist.appendChild(listElement);
+      }
+    }
+
+    if (sublist.hasChildNodes()) {
+      this.element.appendChild(sublist);
     }
   }
 
-  if (sublist.hasChildNodes()) {
-    this.element.appendChild(sublist);
-  }
-};
-
-ContextMenu.prototype.createContent = function (node) {
-  const menuItems =
+  createContent(node) {
+    const menuItems =
     node && node.children.length ? this.branchMenuItems : this.menuItems;
-  for (const subgroup of menuItems) {
-    this.createSublist(subgroup, node);
+    for (const subgroup of menuItems) {
+      this.createSublist(subgroup, node);
+    }
+    document.body.addEventListener('click', createHandler(this, 'close'));
   }
-  document.body.addEventListener('click', createHandler(this, 'close'));
-};
 
+}
 
 function handleContextmenu(event) {
   if (event.button === 2) {
@@ -238,8 +239,10 @@ export default function contextMenuPlugin(decorate) {
     const tree = delegate(...args);
     const [ , config = {} ] = args;
 
-    tree.contextMenu = new ContextMenu(tree, config.contextMenu);
-    tree.addListener('contextmenu', handleContextmenu.bind(tree));
+    if (config.contextMenu !== false) {
+      tree.contextMenu = new ContextMenu(tree, config.contextMenu);
+      tree.addListener('contextmenu', handleContextmenu.bind(tree));
+    }
 
     return tree;
   });

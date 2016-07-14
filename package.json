@@ -1,8 +1,8 @@
 {
   "name": "phylocanvas-plugin-context-menu",
-  "version": "3.7.0",
+  "version": "3.8.0",
   "description": "Contextual functions for Phylocanvas",
-  "main": "index.js",
+  "main": "dist/index.min.js",
   "scripts": {
     "start": "webpack-dev-server --inline --host 0.0.0.0",
     "build": "NODE_ENV=production webpack",
@@ -34,5 +34,9 @@
     "style-loader": "^0.13.0",
     "webpack": "^1.12.2",
     "webpack-dev-server": "^1.12.0"
-  }
+  },
+  "files": [
+    "dist",
+    "*.md"
+  ]
 }
