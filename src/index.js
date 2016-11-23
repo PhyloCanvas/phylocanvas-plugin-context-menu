@@ -84,6 +84,13 @@ export const DEFAULT_MENU_ITEMS = [
   }, {
     text: 'Redraw Original Tree',
     handler: 'redrawOriginalTree',
+  }, {
+    text: 'Expand All',
+    handler(tree) {
+      for (const branch of Object.values(tree.branches)) {
+        branch.expand();
+      }
+    },
   } ],
 
   [ {
