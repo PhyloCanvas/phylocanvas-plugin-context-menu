@@ -122,7 +122,7 @@ export const DEFAULT_BRANCH_MENU_ITEMS = [
       branch.tree.draw(); // some browsers do not fire mousemove after clicking
     },
   }, {
-    text: 'Rotate Subtree',
+    text: 'Invert Subtree',
     handler: 'rotate',
   } ],
 
