@@ -67,15 +67,26 @@ function createAboutLink() {
 
 export const DEFAULT_MENU_ITEMS = [
 
-  [ {
-    text: 'Show/Hide Labels',
-    handler: 'toggleLabels',
-  }, {
-    text: 'Align/Realign Labels',
-    handler(tree) {
-      tree.alignLabels = !tree.alignLabels;
+  [
+    {
+      text: 'Show/Hide Labels',
+      handler: 'toggleLabels',
     },
-  } ],
+    {
+      text: 'Align/Realign Labels',
+      handler(tree) {
+        tree.alignLabels = !tree.alignLabels;
+      },
+    },
+    {
+      text: 'Show/Hide Internal Labels',
+      handler(tree) {
+        tree.showInternalNodeLabels = !tree.showInternalNodeLabels;
+        tree.showBranchLengthLabels = !tree.showBranchLengthLabels;
+        tree.draw();
+      }
+    },
+  ],
 
   [ {
     text: 'Fit in Panel',
